@@ -14,24 +14,29 @@ public class PointManager : MonoBehaviour
             return instance;
         }
     }
-    public List<MapSettings> settings;
     public PointPath pointPrefabs;
     public StackPath stackPrefabs;
     public GameObject goalPrefabs;
-    private PointPath startPoint;
+    public PointPath startPoint;
     private PointPath endPoint;
+    private Transform tfPointManager;
     private MapSettings curSettings;
     private List<PointPath> pointPath;
     private int curPoint = 0;
     private int level;
 
-    private void Awake()
-    {
+    private void OnInit(){
         curPoint = 0;
         level = DataManager.GetLevel();
-        curSettings = settings[Mathf.Clamp(level, 0, settings.Count - 1)];
+        // curSettings = settings[Mathf.Clamp(level, 0, settings.Count - 1)];
         pointPath = new List<PointPath>();
-        startPoint = transform.GetChild(0).GetChild(0).GetComponent<PointPath>();
+        tfPointManager = transform;
+        curSettings = Resources.Load<MapSettings>("Levels/Level_" + Mathf.Clamp(level, 0, Resources.LoadAll("Levels/", typeof(MapSettings)).Length - 1).ToString());
+    }
+    private void Awake()
+    {
+        OnInit();
+        // startPoint = transform.GetChild(0).GetChild(0).GetComponent<PointPath>();
         startPoint.SetNextPoint(curSettings.pointsMap[1].position);
         pointPath.Add(startPoint);
         Vector3 curRotation = Vector3.zero;
@@ -39,7 +44,7 @@ public class PointManager : MonoBehaviour
         
         for (int i = 1; i < curSettings.pointsMap.Count; i++)
         {
-            PointPath path = Instantiate(pointPrefabs, transform.GetChild(0));
+            PointPath path = Instantiate(pointPrefabs, tfPointManager.GetChild(0));
             Vector3 dir = curSettings.pointsMap[i].position - curSettings.pointsMap[i - 1].position;
             if (dir.x == 0)
             {
@@ -57,7 +62,7 @@ public class PointManager : MonoBehaviour
             point += (curSettings.pointsMap[i].isIncreaseStack ? 1 : -1) * (int)dir.magnitude;
             for (int j = 1; j < Vector3.Distance(curSettings.pointsMap[i].position, curSettings.pointsMap[i - 1].position); j++)
             {
-                StackPath stackPath = Instantiate(stackPrefabs, transform.GetChild(1));
+                StackPath stackPath = Instantiate(stackPrefabs, tfPointManager.GetChild(1));
                 stackPath.transform.localPosition = curSettings.pointsMap[i - 1].position + j * dir.normalized;
                 stackPath.transform.localEulerAngles = curRotation;
                 stackPath.SetStatusPath(curSettings.pointsMap[i].isIncreaseStack, !curSettings.pointsMap[i].isIncreaseStack);
@@ -68,12 +73,12 @@ public class PointManager : MonoBehaviour
         }
         for(int i = 0; i < point; i++)
         {
-            StackPath stackPath = Instantiate(stackPrefabs, transform.GetChild(1));
+            StackPath stackPath = Instantiate(stackPrefabs, tfPointManager.GetChild(1));
             stackPath.transform.localPosition = curSettings.pointsMap[curSettings.pointsMap.Count - 1].position + i * Vector3.forward;
             stackPath.transform.localEulerAngles = Vector3.zero;
             stackPath.SetStatusPath(false, true);
         }
-        GameObject goalObject = Instantiate(goalPrefabs, transform);
+        GameObject goalObject = Instantiate(goalPrefabs, tfPointManager);
         goalObject.transform.localPosition = curSettings.pointsMap[curSettings.pointsMap.Count - 1].position + point * Vector3.forward;
         endPoint = goalObject.transform.GetComponentInChildren<PointPath>();
         endPoint.SetNextPoint(endPoint.transform.position);

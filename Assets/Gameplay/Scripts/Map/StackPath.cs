@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class StackPath : MonoBehaviour
 {
-    private bool hasStack;
-    private bool loseStack;
+    private bool hasStack = true;
+    private bool loseStack = false;
     public bool HasStack {
         get { return hasStack; }
         private set { hasStack = value; }
@@ -17,16 +17,16 @@ public class StackPath : MonoBehaviour
     }
     public Material colorWhite;
     public Material colorYellow;
-    private MeshRenderer colorPath;
-    private GameObject stackObject;
+    public MeshRenderer colorPath;
+    public GameObject stackObject;
 
-    private void Awake()
-    {
-        stackObject = transform.GetChild(0).gameObject;
-        colorPath = transform.GetChild(2).GetComponent<MeshRenderer>();
-        hasStack = true;
-        loseStack = false;
-    }
+    // private void Awake()
+    // {
+    //     stackObject = transform.GetChild(0).gameObject;
+    //     colorPath = transform.GetChild(2).GetComponent<MeshRenderer>();
+    //     hasStack = true;
+    //     loseStack = false;
+    // }
 
     public void SetStatusPath(bool newStatusHave, bool newStatusLose = false)
     {
