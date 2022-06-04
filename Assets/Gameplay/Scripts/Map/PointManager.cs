@@ -36,7 +36,11 @@ public class PointManager : MonoBehaviour
     private void Awake()
     {
         OnInit();
-        // startPoint = transform.GetChild(0).GetChild(0).GetComponent<PointPath>();
+        BuildMap();
+        
+    }
+
+    private void BuildMap(){
         startPoint.SetNextPoint(curSettings.pointsMap[1].position);
         pointPath.Add(startPoint);
         Vector3 curRotation = Vector3.zero;
@@ -83,23 +87,41 @@ public class PointManager : MonoBehaviour
         endPoint = goalObject.transform.GetComponentInChildren<PointPath>();
         endPoint.SetNextPoint(endPoint.transform.position);
     }
-
     public PointPath GetCurPoint(Vector3 direction)
     {
         Vector3 x;
+        int next = 0;
         if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y))
         {
             x = Vector3.right * direction.x;
+            next = pointPath[curPoint].CheckDirection(x);
+            if (next != 0){
+                curPoint = Mathf.Clamp(curPoint + next, 0, pointPath.Count - 1);
+                return pointPath[curPoint];
+            }else{
+                x = Vector3.forward * direction.y;
+                next = pointPath[curPoint].CheckDirection(x);
+                if (next != 0){
+                    curPoint = Mathf.Clamp(curPoint + next, 0, pointPath.Count - 1);
+                    return pointPath[curPoint];
+                }
+            }
         }
         else
         {
             x = Vector3.forward * direction.y;
-        }
-        int next = pointPath[curPoint].CheckDirection(x);
-        if (next != 0)
-        {
-            curPoint = Mathf.Clamp(curPoint + next, 0, pointPath.Count - 1);
-            return pointPath[curPoint];
+            next = pointPath[curPoint].CheckDirection(x);
+            if (next != 0){
+                curPoint = Mathf.Clamp(curPoint + next, 0, pointPath.Count - 1);
+                return pointPath[curPoint];
+            }else{
+                x = Vector3.right * direction.x;
+                next = pointPath[curPoint].CheckDirection(x);
+                if (next != 0){
+                    curPoint = Mathf.Clamp(curPoint + next, 0, pointPath.Count - 1);
+                    return pointPath[curPoint];
+                }
+            }
         }
         return null;
     }

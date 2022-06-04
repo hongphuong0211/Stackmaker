@@ -13,11 +13,7 @@ public class GameManager : MonoBehaviour
             return instance; 
         } 
     }
-    private bool endGame = false;
-    public bool EndGame
-    {
-        get { return endGame; }
-    }
+    private EnumManager.GameState gameState;
 
     public UnityAction ActionEndGame;
     public UnityAction ActionStartGame;
@@ -35,8 +31,20 @@ public class GameManager : MonoBehaviour
     //}
     private void Start()
     {
-        ActionStartGame += ()=>{ endGame = false; };
-        ActionEndGame += ()=>{ endGame = true; };
+        gameState = EnumManager.GameState.GameMenu;
+        ActionStartGame += ()=>{ ChangeState(EnumManager.GameState.GamePlay);};
+        ActionEndGame += ()=>{ ChangeState(EnumManager.GameState.EndGame); };
     }
 
+    public void ChangeState(EnumManager.GameState newState){
+        if(gameState != newState){
+            gameState = newState;
+        }
+    }
+
+    public bool IsState(EnumManager.GameState checkState){
+        return gameState == checkState;
+    }
 }
+
+

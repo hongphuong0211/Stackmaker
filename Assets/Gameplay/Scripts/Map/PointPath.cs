@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -22,16 +22,14 @@ public class PointPath : MonoBehaviour
 
     public int CheckDirection(Vector3 dirMove)
     {
-        if(dirMove.normalized == (prevPoint - transform.position).normalized)
+        if((dirMove.normalized - (prevPoint - transform.position).normalized).sqrMagnitude == 0)
         {
             return -1;
-        }else if (dirMove.normalized == (nextPoint - transform.position).normalized)
+        }
+        if ((dirMove.normalized - (nextPoint - transform.position).normalized).sqrMagnitude == 0)
         {
             return 1;
         }
-        else
-        {
-            return 0;
-        }
+        return 0;
     }
 }

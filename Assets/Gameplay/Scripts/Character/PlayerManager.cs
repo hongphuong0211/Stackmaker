@@ -14,23 +14,24 @@ public class PlayerManager : MonoBehaviour
             return instance; } 
     }
 
-    public float speed = 5.0f;
+    public float maxSpeed = 5.0f;
+    private float deltaSpeed = 0.1f;
+    private float speed = 5.0f;
+    private float deltaDistance = 0.0001f;
     private bool touchStart = false;
-    private bool startGame = false;
     private Vector2 pointA;
     private Vector2 pointB;
     private bool isMoving = false;
-    private bool isEnd = false;
     private Vector2 offset;
     private Vector2 direction;
     private PointPath pointToward;
-    private StackPlayer stackManager;
-    private ViewsPlayer viewsManager;
-    private void Awake()
-    {
-        stackManager = GetComponentInChildren<StackPlayer>();
-        viewsManager = GetComponentInChildren<ViewsPlayer>();
-    }
+    public StackPlayer stackManager;
+    public ViewsPlayer viewsManager;
+    // private void Awake()
+    // {
+    //     stackManager = GetComponentInChildren<StackPlayer>();
+    //     viewsManager = GetComponentInChildren<ViewsPlayer>();
+    // }
     void Update()
     {
         if (Input.GetMouseButtonDown(0))
@@ -39,9 +40,9 @@ public class PlayerManager : MonoBehaviour
         }
         if (Input.GetMouseButton(0))
         {
-            if (!startGame)
+            if (!GameManager.Instance.IsState(EnumManager.GameState.GamePlay))
             {
-                startGame = true;
+                GameManager.Instance.ChangeState(EnumManager.GameState.GamePlay);
                 GameManager.Instance.ActionStartGame.Invoke();
             }
             touchStart = true;
@@ -55,7 +56,7 @@ public class PlayerManager : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        if (!isEnd && touchStart && !isMoving)
+        if (!GameManager.Instance.IsState(EnumManager.GameState.EndGame) && touchStart && !isMoving)
         {
             offset = pointB - pointA;
             pointA = pointB;
@@ -63,25 +64,29 @@ public class PlayerManager : MonoBehaviour
             if (pointToward != null)
             {
                 isMoving = true;
+                speed = maxSpeed;
+                deltaSpeed = (transform.position - pointToward.transform.position).magnitude / maxSpeed;
             }
             
         }
         if (isMoving)
         {
+            if (speed > 0.01f){
+                speed -= deltaSpeed * Time.fixedDeltaTime;
+            }
             var step = speed * Time.fixedDeltaTime; // calculate distance to move
             transform.position = Vector3.MoveTowards(transform.position, pointToward.transform.position, step);
-            if(Vector3.Distance(transform.position, pointToward.transform.position) < 0.0001f)
+            if((transform.position - pointToward.transform.position).magnitude < deltaDistance)
             {
                 if (pointToward.transform.position == pointToward.NextPoint)
                 {
-                    if (!isEnd)
+                    if (!GameManager.Instance.IsState(EnumManager.GameState.EndGame))
                     {
                         pointToward = PointManager.Instance.GetEndPoint();
-                        isEnd = true;
+                        GameManager.Instance.ChangeState(EnumManager.GameState.EndGame);
                     }
                     else
                     {
-                        print("ENd Game");
                         GameManager.Instance.ActionEndGame.Invoke();
                         isMoving = false;
                     }
@@ -94,6 +99,8 @@ public class PlayerManager : MonoBehaviour
                     isMoving = false;
                 }
             }
+        }else if(!GameManager.Instance.IsState(EnumManager.GameState.EndGame)){
+            viewsManager.SetStateAnim(EnumManager.StatePlayer.Idle);
         }
     }
 

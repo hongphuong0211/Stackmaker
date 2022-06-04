@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,10 +10,10 @@ public class DataManager : PlayerPrefs
         {
             return;
         }
-        SetInt("level", newLevel);
+        SetInt(ConstantManager.DATA_LEVEL, newLevel);
     }
     public static int GetLevel()
     {
-        return GetInt("level", 0);
+        return GetInt(ConstantManager.DATA_LEVEL, 0);
     }
 }

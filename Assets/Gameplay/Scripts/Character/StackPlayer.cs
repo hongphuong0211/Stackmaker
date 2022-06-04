@@ -6,19 +6,13 @@ public class StackPlayer : MonoBehaviour
 {
     public GameObject stackPrefabs;
     public int maxStack = 100;
+    private float deltaHeightStack = 0.3f;
     private List<GameObject> stackList;
     private int curStack;
 
     private void Awake()
     {
         stackList = new List<GameObject>();
-        for(int i = 0; i <maxStack; i++)
-        {
-            GameObject stack = Instantiate(stackPrefabs, transform);
-            stack.transform.localPosition = Vector3.up * i * 0.3f;
-            stack.SetActive(false);
-            stackList.Add(stack);
-        }
         curStack = 0;
     }
 
@@ -26,9 +20,26 @@ public class StackPlayer : MonoBehaviour
     {
         if (curStack < newCount)
         {
-            for (int i = curStack; i < newCount; i++)
+            if (newCount < stackList.Count)
             {
-                stackList[i].SetActive(true);
+                for (int i = curStack; i < newCount; i++)
+                {
+                    stackList[i].SetActive(true);
+                }
+            }
+            else
+            {
+                for (int i = curStack; i < stackList.Count; i++)
+                {
+                    stackList[i].SetActive(true);
+                }
+                for (int i = stackList.Count; i < newCount; i++)
+                {
+                    GameObject stack = Instantiate(stackPrefabs, transform);
+                    stack.transform.localPosition = Vector3.up * i * deltaHeightStack;
+                    stack.SetActive(true);
+                    stackList.Add(stack);
+                }
             }
         }
         else

@@ -19,4 +19,18 @@ public class EnumManager : MonoBehaviour
         Pause,
         Results
     }
+
+    public enum StatePlayer
+    {
+        Idle,
+        Jump,
+        Win,
+    }
+
+    public enum GameState{
+        GameMenu,
+        Pause,
+        GamePlay,
+        EndGame,
+    }
 }

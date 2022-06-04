@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System;
 using UnityEngine;
 // [CreateAssetMenu(menuName = "new level")]
@@ -27,8 +27,7 @@ public class MapSettings: MonoBehaviour
         List<PointPath> pointPath = new List<PointPath>();
         Vector3 curRotation = Vector3.zero;
         int point = 0;
-        PointPath startPoint = Instantiate<PointPath>(pointPrefabs, tfSettings);
-        startPoint.transform.position = pointsMap[0].position;
+        PointPath startPoint = SpawnStartPoint();
         startPoint.SetNextPoint(pointsMap[1].position);
         pointPath.Add(startPoint);
         for (int i = 1; i < pointsMap.Count; i++)
@@ -75,6 +74,12 @@ public class MapSettings: MonoBehaviour
         for(int i = TFSettings.childCount - 1; i > -1; i--){
             DestroyImmediate(TFSettings.GetChild(i).gameObject);
         }
+    }
+
+    private PointPath SpawnStartPoint(){
+        PointPath startPoint = Instantiate<PointPath>(pointPrefabs, tfSettings);
+        startPoint.transform.position = pointsMap[0].position;
+        return startPoint;
     }
 }
 [Serializable]

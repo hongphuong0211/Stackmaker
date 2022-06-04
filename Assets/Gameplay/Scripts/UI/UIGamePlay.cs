@@ -10,11 +10,13 @@ public class UIGamePlay : UIInstance
     }
 
     public void PauseGame(){
+        GameManager.Instance.ChangeState(EnumManager.GameState.Pause);
         Time.timeScale = 0;
         UIPause.gameObject.SetActive(true);
     }
 
     public void ContinueGame(){
+        GameManager.Instance.ChangeState(EnumManager.GameState.GamePlay);
         UIPause.gameObject.SetActive(false);
         Time.timeScale = 1;
     }

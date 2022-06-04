@@ -4,15 +4,7 @@ using UnityEngine;
 
 public class ConstantManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    public static string TAG_PLAYER = "Player";
+    public static string DATA_LEVEL = "level";
+    public static string ACTION_PLAYER = "renwu";
 }
